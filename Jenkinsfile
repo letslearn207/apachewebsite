@@ -30,16 +30,25 @@ pipeline {
                 }
             }
         }
+       
         stage('Deploy to Kubernetes') {
             steps {
-                script{
-                     kubernetesDeploy (configs: 'deployment.yml' ,kubeconfigId: 'kubeconfig')
-                   
-                    }
+                withCredentials([
+                    file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')
+                ]) {
+                    sh '''
+                        export KUBECONFIG="$KUBECONFIG_FILE"
+                        kubectl apply -f deployment.yml
+                        kubectl apply -f service.yml
+                        kubectl get pods -o wide
+                        kubectl get svc
+                    '''
                 }
             }
         }
+ 
     }
+}
 
 
 
