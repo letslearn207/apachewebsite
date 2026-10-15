@@ -1,0 +1,2 @@
+this is text file2
+this is a modification
